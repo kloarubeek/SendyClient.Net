@@ -20,7 +20,7 @@ SendyClient.Net is available to download via [NuGet!](https://www.nuget.org/pack
 
 ## How to use
 
-```
+```c#
 var sendyClient = new SendyClient.Net.SendyClient(new Uri("https://mysendy"), "mySendySecret");
 
 var result = await sendyClient.Subscribe("sjaan@banaan.nl", "Sjaan", "myListId");
@@ -28,7 +28,7 @@ var result = await sendyClient.Subscribe("sjaan@banaan.nl", "Sjaan", "myListId")
 
 If you would like to use the campaign API, [download it first.](http://forum.sendy.co/discussion/768/added-some-api-functionality/p1)
 
-```
+```c#
 var sendyClient = new SendyClient.Net.SendyClient(new Uri("https://mysendy"), "mySendySecret");
 
 var campaign = new Campaign
