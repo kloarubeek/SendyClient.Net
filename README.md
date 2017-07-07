@@ -2,7 +2,7 @@
 A Sendy client to interact in .Net Core applications with the [Sendy API](https://sendy.co)!
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/kloarubeek/SendyClient.Net?branch=master)](https://bettercodehub.com/)
-
+[![NuGet](https://img.shields.io/badge/nuget-1.0.0-blue.svg)](https://www.nuget.org/packages/SendyClient.Net/)
 # Sendy
 It can be used to perform the following [Sendy API actions](https://sendy.co/api):
 - Subscribe
