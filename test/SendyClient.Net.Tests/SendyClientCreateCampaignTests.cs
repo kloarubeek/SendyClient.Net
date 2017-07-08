@@ -73,6 +73,7 @@ namespace SendyClient.Net.Tests
 		{
 			//arrange
 			var expectedResponse = "Campaign created and now sending";
+			var listIds = new List<string> {"listId"};
 			var campaign = new Campaign
 			{
 				BrandId = 1,
@@ -96,15 +97,18 @@ namespace SendyClient.Net.Tests
 				new KeyValuePair<string, string>("plain_text", campaign.PlainText),
 				new KeyValuePair<string, string>("html_text", campaign.HtmlText),
 				new KeyValuePair<string, string>("brand_id", campaign.BrandId.ToString()),
-				new KeyValuePair<string, string>("query_string", campaign.Querystring)
-			};
+				new KeyValuePair<string, string>("query_string", campaign.Querystring),
+				new KeyValuePair<string, string>("send_campaign", "1"),
+				new KeyValuePair<string, string>("list_ids", string.Join(",", listIds))
+
+		};
 
 			_httpMessageHandlerMock.Expect("/api/campaigns/create.php")
 				.WithFormData(expectedPostData)
 				.Respond("text/plain", expectedResponse);
 
 			//act
-			var result = await _target.CreateCampaign(campaign, true, new List<string> {"listId"});
+			var result = await _target.CreateCampaign(campaign, true, listIds);
 
 			//assert
 			_httpMessageHandlerMock.VerifyNoOutstandingExpectation();
