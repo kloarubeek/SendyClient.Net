@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SendyClient.Net", "src\SendyClient.Net.csproj", "{D086F38D-FE19-4BE6-9CAD-4DE573FFC228}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendyClient.Net.Tests", "test\SendyClient.Net.Tests\SendyClient.Net.Tests.csproj", "{AF097020-1764-4F17-99F3-41E3CFDDE7F0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D086F38D-FE19-4BE6-9CAD-4DE573FFC228}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D086F38D-FE19-4BE6-9CAD-4DE573FFC228}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D086F38D-FE19-4BE6-9CAD-4DE573FFC228}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D086F38D-FE19-4BE6-9CAD-4DE573FFC228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF097020-1764-4F17-99F3-41E3CFDDE7F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF097020-1764-4F17-99F3-41E3CFDDE7F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF097020-1764-4F17-99F3-41E3CFDDE7F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF097020-1764-4F17-99F3-41E3CFDDE7F0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
