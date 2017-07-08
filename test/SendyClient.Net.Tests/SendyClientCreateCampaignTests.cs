@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
-using SendyClient.Net.Model;
+using Sendy.Client.Model;
 using Xunit;
 
-namespace SendyClient.Net.Tests
+namespace Sendy.Client.Tests
 {
     public class SendyClientCreateCampaignTests
 	{

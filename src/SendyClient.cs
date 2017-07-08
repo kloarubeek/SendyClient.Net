@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading.Tasks;
-using SendyClient.Net.Model;
-using static SendyClient.Net.SendyResponseHelper;
 using System.Runtime.CompilerServices;
-[assembly: InternalsVisibleTo("SendyClient.Net.Tests")]
+using System.Threading.Tasks;
+using Sendy.Client.Model;
 
-namespace SendyClient.Net
+[assembly: InternalsVisibleTo("Sendy.Client.Tests")]
+
+namespace Sendy.Client
 {
 	public class SendyClient : IDisposable
 	{
@@ -39,7 +39,7 @@ namespace SendyClient.Net
 
 			var result = await _httpClient.PostAsync("subscribe", subscribeData);
 
-			return await HandleResponse(result, SendyActions.Subscribe);
+			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.Subscribe);
 		}
 
 		public async Task<SendyResponse> Unsubscribe(string emailAddress, string listId)
@@ -52,7 +52,7 @@ namespace SendyClient.Net
 
 			var result = await _httpClient.PostAsync("unsubscribe", subscribeData);
 
-			return await HandleResponse(result, SendyActions.Unsubscribe);
+			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.Unsubscribe);
 		}
 
 		public async Task<SendyResponse> DeleteSubscriber(string emailAddress, string listId)
@@ -65,7 +65,7 @@ namespace SendyClient.Net
 
 			var result = await _httpClient.PostAsync("api/subscribers/delete.php", subscribeData);
 
-			return await HandleResponse(result, SendyActions.DeleteSubscriber);
+			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.DeleteSubscriber);
 		}
 
 		public async Task<SendyResponse> SubscriptionStatus(string emailAddress, string listId)
@@ -78,7 +78,7 @@ namespace SendyClient.Net
 
 			var result = await _httpClient.PostAsync("api/subscribers/subscription-status.php", subscribeData);
 
-			return await HandleResponse(result, SendyActions.SubscriptionStatus);
+			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.SubscriptionStatus);
 		}
 
 		public async Task<SendyResponse> ActiveSubscriberCount(string listId)
@@ -90,7 +90,7 @@ namespace SendyClient.Net
 
 			var result = await _httpClient.PostAsync("api/subscribers/active-subscriber-count.php", subscribeData);
 			//test return value
-			return await HandleResponse(result, SendyActions.ActiveSubscriberCount);
+			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.ActiveSubscriberCount);
 		}
 
 		/// <param name="campaign"></param>
@@ -121,7 +121,7 @@ namespace SendyClient.Net
 
 			var result = await _httpClient.PostAsync("api/campaigns/create.php", subscribeData);
 
-			return await HandleResponse(result, SendyActions.CreateCampaign);
+			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.CreateCampaign);
 		}
 
 		private List<KeyValuePair<string, string>> GetPostData()

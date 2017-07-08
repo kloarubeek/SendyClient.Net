@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SendyClient.Net.Model;
+using Sendy.Client.Model;
 
-namespace SendyClient.Net
+namespace Sendy.Client
 {
 	/// <summary>
 	/// The Sendy API has an interesting response system. We'd like to know if things were successful or not. This is only possible
