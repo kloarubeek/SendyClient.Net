@@ -2,7 +2,7 @@
 A Sendy client to interact in .Net Core applications with the [Sendy API](https://sendy.co)!
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/kloarubeek/SendyClient.Net?branch=master)](https://bettercodehub.com/)
-[![NuGet](https://img.shields.io/badge/nuget-1.0.0-blue.svg)](https://www.nuget.org/packages/SendyClient.Net/)
+[![NuGet](https://img.shields.io/badge/nuget-2.0.0-blue.svg)](https://www.nuget.org/packages/SendyClient.Net/)
 # Sendy
 It can be used to perform the following [Sendy API actions](https://sendy.co/api):
 - Subscribe
@@ -21,7 +21,7 @@ SendyClient.Net is available to download via [NuGet!](https://www.nuget.org/pack
 ## How to use
 
 ```c#
-var sendyClient = new SendyClient.Net.SendyClient(new Uri("https://mysendy"), "mySendySecret");
+var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret");
 
 var result = await sendyClient.Subscribe("sjaan@banaan.nl", "Sjaan", "myListId");
 ```
@@ -29,7 +29,7 @@ var result = await sendyClient.Subscribe("sjaan@banaan.nl", "Sjaan", "myListId")
 If you would like to use the campaign API, [download it first.](http://forum.sendy.co/discussion/768/added-some-api-functionality/p1)
 
 ```c#
-var sendyClient = new SendyClient.Net.SendyClient(new Uri("https://mysendy"), "mySendySecret");
+var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret");
 
 var campaign = new Campaign
 {
