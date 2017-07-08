@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
 using Xunit;
 
-namespace SendyClient.Net.Tests
+namespace Sendy.Client.Tests
 {
     public class SendyClientDeleteSubscriberTests
     {

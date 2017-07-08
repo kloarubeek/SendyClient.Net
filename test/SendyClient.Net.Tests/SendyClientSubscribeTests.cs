@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
 using Xunit;
 
-namespace SendyClient.Net.Tests
+namespace Sendy.Client.Tests
 {
     public class SendyClientSubscribeTests
     {

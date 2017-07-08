@@ -1,4 +1,4 @@
-﻿namespace SendyClient.Net.Model
+﻿namespace Sendy.Client.Model
 {
     public class SendyResponse
     {

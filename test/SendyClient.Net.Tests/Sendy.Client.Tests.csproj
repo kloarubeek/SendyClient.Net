@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SendyClient.Net.csproj" />
+    <ProjectReference Include="..\..\src\Sendy.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
