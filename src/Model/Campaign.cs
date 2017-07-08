@@ -3,7 +3,6 @@
     public class Campaign
     {
 	    public string FromName { get; set; }
-	    public string ToName { get; set; }
 	    public string FromEmail { get; set; }
 	    public string ReplyTo { get; set; }
 	    public string Title { get; set; }

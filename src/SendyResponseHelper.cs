@@ -29,10 +29,9 @@ namespace SendyClient.Net
 
 	    internal static async Task<SendyResponse> HandleResponse(HttpResponseMessage responseMessage, SendyActions action)
 	    {
-		    var responseContent = await responseMessage.Content.ReadAsStringAsync();
-
 		    if (responseMessage.IsSuccessStatusCode)
 		    {
+			    var responseContent = await responseMessage.Content.ReadAsStringAsync();
 			    var isSuccess = IsSuccess(responseContent, action);
 
 			    return new SendyResponse
@@ -46,7 +45,7 @@ namespace SendyClient.Net
 		    {
 			    IsSuccess = false,
 			    ErrorMessage =
-				    $"Problem while connecting to your Sendy installation. Statuscode {responseMessage.StatusCode}, error: {responseContent}"
+				    $"Problem while connecting to your Sendy installation. Statuscode {responseMessage.StatusCode}, error: {responseMessage.Content}"
 		    };
 	    }
 
