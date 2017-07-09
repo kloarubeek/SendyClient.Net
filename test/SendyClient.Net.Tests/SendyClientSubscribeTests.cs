@@ -78,5 +78,36 @@ namespace Sendy.Client.Tests
 		    Assert.False(result.IsSuccess);
 			Assert.Equal("Invalid list ID.", result.ErrorMessage);
 	    }
+
+	    [Fact]
+	    public async Task Subscribe_WithCustomFields_ReturnsOk()
+	    {
+		    //arrange
+		    var emailAddress = "foo@poo.nl";
+		    var name = "Jeroen";
+		    var listId = "xyz123";
+		    var customFields = new Dictionary<string, string> {{"customField1", "foo"}, {"customField2", "poo"}};
+
+		    var expectedPostData = new List<KeyValuePair<string, string>>
+		    {
+			    new KeyValuePair<string, string>("email", emailAddress),
+			    new KeyValuePair<string, string>("name", name),
+			    new KeyValuePair<string, string>("list", listId),
+			    new KeyValuePair<string, string>("customField1", "foo"),
+			    new KeyValuePair<string, string>("customField2", "poo")
+		    };
+
+		    _httpMessageHandlerMock.Expect("/subscribe")
+			    .WithFormData(expectedPostData)
+			    .Respond("text/plain", "1");
+
+		    //act
+		    var result = await _target.Subscribe(emailAddress, name, listId, customFields);
+
+		    //assert
+			//this one validates that custom fields are send to the api
+		    _httpMessageHandlerMock.VerifyNoOutstandingExpectation();
+		    Assert.True(result.IsSuccess);
+	    }
 	}
 }

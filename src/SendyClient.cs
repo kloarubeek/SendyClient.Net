@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -28,13 +29,20 @@ namespace Sendy.Client
 			_httpClient.BaseAddress = baseUri;
 		}
 
-		public async Task<SendyResponse> Subscribe(string emailAddress, string name, string listId)
+		public Task<SendyResponse> Subscribe(string emailAddress, string name, string listId)
+		{
+			return Subscribe(emailAddress, name, listId, null);
+		}
+
+		/// <param name="customFields">For custom fields, use Sendy fieldname as key value.</param>
+		public async Task<SendyResponse> Subscribe(string emailAddress, string name, string listId, Dictionary<string, string> customFields)
 		{
 			var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("email", emailAddress));
 			postData.Add(new KeyValuePair<string, string>("name", name));
 			postData.Add(new KeyValuePair<string, string>("list", listId));
 
+			AppendCustomFields(postData, customFields);
 			var subscribeData = new FormUrlEncodedContent(postData);
 
 			var result = await _httpClient.PostAsync("subscribe", subscribeData);
@@ -131,6 +139,17 @@ namespace Sendy.Client
 				new KeyValuePair<string, string>("api_key", _apiKey),
 				new KeyValuePair<string, string>("boolean", "true") //otherwise it could return a whole html page
 			};
+		}
+
+		private static void AppendCustomFields(List<KeyValuePair<string, string>> postData, Dictionary<string, string> customFields)
+		{
+			if (customFields != null && customFields.Any())
+			{
+				foreach (var customField in customFields)
+				{
+					postData.Add(new KeyValuePair<string, string>(customField.Key, customField.Value));
+				}
+			}
 		}
 
 		public void Dispose()
