@@ -2,10 +2,10 @@
 A Sendy client to interact in .Net Core applications with the [Sendy API](https://sendy.co)!
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/kloarubeek/SendyClient.Net?branch=master)](https://bettercodehub.com/)
-[![NuGet](https://img.shields.io/badge/nuget-2.0.0-blue.svg)](https://www.nuget.org/packages/SendyClient.Net/)
+[![NuGet](https://img.shields.io/badge/nuget-2.1.0-blue.svg)](https://www.nuget.org/packages/SendyClient.Net/)
 # Sendy
 It can be used to perform the following [Sendy API actions](https://sendy.co/api):
-- Subscribe
+- Subscribe (including custom fields)
 - Unsubscribe
 - Delete subscriber
 - Subscription status
@@ -24,6 +24,15 @@ SendyClient.Net is available to download via [NuGet!](https://www.nuget.org/pack
 var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret");
 
 var result = await sendyClient.Subscribe("sjaan@banaan.nl", "Sjaan", "myListId");
+```
+
+Subscribe with custom fields 'birthday' and 'logintoken'
+
+```c#
+var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret");
+var customFields = new Dictionary<string, string> {{"birthday", "12/9/1976"}, {"logintoken", "x4bla9!bg"}};
+
+var result = await sendyClient.Subscribe("sjaan@banaan.nl", "Sjaan", "myListId", customFields);
 ```
 
 If you would like to use the campaign API, [download it first.](http://forum.sendy.co/discussion/768/added-some-api-functionality/p1)
