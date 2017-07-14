@@ -132,6 +132,29 @@ namespace Sendy.Client
 			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.CreateCampaign);
 		}
 
+		/// <summary>
+		/// Creates a new mailing list.
+		/// </summary>
+		/// <param name="mailingList"></param>
+		/// <returns>The id of the list or the error message.</returns>
+		public async Task<SendyResponse> CreateList(MailingList mailingList)
+		{
+			var postData = GetPostData();
+			postData.Add(new KeyValuePair<string, string>("list_name", mailingList.Name));
+			postData.Add(new KeyValuePair<string, string>("brand_id", mailingList.BrandId.ToString()));
+
+			if(mailingList.CustomFields.Any())
+			{
+				postData.Add(new KeyValuePair<string, string>("custom_fields", string.Join(",", mailingList.CustomFields.Select(c => c.Name))));
+				postData.Add(new KeyValuePair<string, string>("field_types", string.Join(",", mailingList.CustomFields.Select(c => c.DataType.ToString()))));
+			}
+			var subscribeData = new FormUrlEncodedContent(postData);
+
+			var result = await _httpClient.PostAsync("api/lists/create.php", subscribeData);
+
+			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.CreateList);
+		}
+
 		private List<KeyValuePair<string, string>> GetPostData()
 		{
 			return new List<KeyValuePair<string, string>>
