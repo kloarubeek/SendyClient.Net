@@ -19,13 +19,14 @@ namespace Sendy.Client
 		    DeleteSubscriber,
 		    SubscriptionStatus,
 		    ActiveSubscriberCount,
-		    CreateCampaign
+		    CreateCampaign,
+			CreateList
 	    }
 
 		/// <summary>
 		/// List of actions that have a useful content in case of success, like 'Campaign created'.
 		/// </summary>
-		private static readonly List<SendyActions> ActionsWithUsefulResponseContent = new List<SendyActions> { SendyActions.SubscriptionStatus, SendyActions.ActiveSubscriberCount, SendyActions.CreateCampaign };
+		private static readonly List<SendyActions> ActionsWithUsefulResponseContent = new List<SendyActions> { SendyActions.SubscriptionStatus, SendyActions.ActiveSubscriberCount, SendyActions.CreateCampaign, SendyActions.CreateList };
 
 	    internal static async Task<SendyResponse> HandleResponse(HttpResponseMessage responseMessage, SendyActions action)
 	    {
@@ -63,6 +64,7 @@ namespace Sendy.Client
 				    return successContent.Contains(responseContent);
 
 			    case SendyActions.ActiveSubscriberCount:
+			    case SendyActions.CreateList:
 				    return int.TryParse(responseContent, out int dummy);
 
 			    case SendyActions.CreateCampaign:
