@@ -24,7 +24,7 @@ SendyClient.Net is available to download via [NuGet!](https://www.nuget.org/pack
 ```c#
 var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret");
 
-var result = await sendyClient.Subscribe("sjaan@banaan.nl", "Sjaan", "myListId");
+var result = await sendyClient.SubscribeAsync("sjaan@banaan.nl", "Sjaan", "myListId");
 ```
 
 Subscribe with custom fields 'birthday' and 'logintoken'
@@ -33,7 +33,7 @@ Subscribe with custom fields 'birthday' and 'logintoken'
 var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret");
 var customFields = new Dictionary<string, string> {{"birthday", "12/9/1976"}, {"logintoken", "x4bla9!bg"}};
 
-var result = await sendyClient.Subscribe("sjaan@banaan.nl", "Sjaan", "myListId", customFields);
+var result = await sendyClient.SubscribeAsync("sjaan@banaan.nl", "Sjaan", "myListId", customFields);
 ```
 
 If you would like to use the campaign API, [download it first.](http://forum.sendy.co/discussion/768/added-some-api-functionality/p1)
@@ -51,11 +51,10 @@ var campaign = new Campaign
   Querystring = "querystring=sjaak",
   ReplyTo = "sjaan@banaan.nl",
   Subject = "Sent with SendyClient.Net!",
-  Title = "Campaign demo",
-  ToName = "Jeroen"
+  Title = "Campaign demo"
 };
 
-result = await sendyClient.CreateCampaign(campaign, false, null);
+result = await sendyClient.CreateCampaignAsync(campaign, false, null);
 ```
 
 ## <a name="createList"></a>Create list API
@@ -87,8 +86,21 @@ var list = new MailingList
 list.CustomFields.Add(new CustomField("custom field 1"));
 list.CustomFields.Add(new CustomField("custom field 2", CustomField.DataTypes.Date));
 
-var result = await sendyClient.CreateList(list);
+var result = await sendyClient.CreateListAsync(list);
 ```
+
+
+## API updates
+The `SendyClient` class constructor now includes a new parameter named apiVer where you can pass in the version of Sendy you're working against.
+
+```c#
+var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret", new Version(3, 0, 6));
+```
+
+### Version 3 changes
+
+- Subscribe API now includes country, ipaddress, referrer & gdpr parameters.
+- CreateCampaign API now includes segment_ids, exclude_list_ids & exclude_segments_ids parameters.
 
 
 ## Questions

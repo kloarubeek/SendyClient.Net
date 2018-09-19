@@ -20,7 +20,7 @@ namespace Sendy.Client.Tests
 		    var httpClient = _httpMessageHandlerMock.ToHttpClient();
 		    httpClient.BaseAddress = baseUri;
 
-		    _target = new SendyClient(baseUri, apiKey, httpClient);
+		    _target = new SendyClient(baseUri, apiKey, null, httpClient);
 		}
 
 	    [Fact]
@@ -41,7 +41,7 @@ namespace Sendy.Client.Tests
 			    .Respond("text/plain", "1");
 
 		    //act
-		    var result = await _target.DeleteSubscriber(emailAddress, listId);
+		    var result = await _target.DeleteSubscriberAsync(emailAddress, listId);
 
 			//assert
 		    _httpMessageHandlerMock.VerifyNoOutstandingExpectation();
@@ -67,7 +67,7 @@ namespace Sendy.Client.Tests
 			    .Respond("text/plain", expectedError);
 
 		    //act
-		    var result = await _target.DeleteSubscriber(emailAddress, listId);
+		    var result = await _target.DeleteSubscriberAsync(emailAddress, listId);
 
 			//assert
 		    _httpMessageHandlerMock.VerifyNoOutstandingExpectation();

@@ -13,36 +13,50 @@ namespace Sendy.Client
 	public class SendyClient : IDisposable
 	{
 		private readonly string _apiKey;
-		private readonly HttpClient _httpClient;
+        private readonly Version _apiVer;
+        private readonly HttpClient _httpClient;
 
-		public SendyClient(Uri baseUri, string apiKey) : this(baseUri, apiKey, null)
+		public SendyClient(Uri baseUri, string apiKey, Version apiVer) : this(baseUri, apiKey, apiVer, null)
 		{
 		}
 
 		/// <summary>
 		/// This one should only be used for unit tests to support injecting of the httpClient
 		/// </summary>
-		internal SendyClient(Uri baseUri, string apiKey, HttpClient httpClient = null)
+		internal SendyClient(Uri baseUri, string apiKey, Version apiVer = null, HttpClient httpClient = null)
 		{
 			_apiKey = apiKey;
+            _apiVer = apiVer ?? new Version(2, 1);
 			_httpClient = httpClient ?? new HttpClient();
 			_httpClient.BaseAddress = baseUri;
 		}
 
-		public Task<SendyResponse> Subscribe(string emailAddress, string name, string listId)
+		public Task<SendyResponse> SubscribeAsync(string emailAddress, string name, string listId)
 		{
-			return Subscribe(emailAddress, name, listId, null);
+			return SubscribeAsync(emailAddress, name, listId, null);
 		}
 
 		/// <param name="customFields">For custom fields, use Sendy fieldname as key value.</param>
-		public async Task<SendyResponse> Subscribe(string emailAddress, string name, string listId, Dictionary<string, string> customFields)
+		public async Task<SendyResponse> SubscribeAsync(string emailAddress, string name, string listId, Dictionary<string, string> customFields, string country = null, string ipaddress = null, string referrer = null, bool gdpr = false)
 		{
 			var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("email", emailAddress));
 			postData.Add(new KeyValuePair<string, string>("name", name));
 			postData.Add(new KeyValuePair<string, string>("list", listId));
 
-			AppendCustomFields(postData, customFields);
+            if (_apiVer >= new Version(3, 0, 5))
+            {
+                if (country != null)
+                    postData.Add(new KeyValuePair<string, string>("country", country));
+                if (ipaddress != null)
+                    postData.Add(new KeyValuePair<string, string>("ipaddress", ipaddress));
+                if (referrer != null)
+                    postData.Add(new KeyValuePair<string, string>("referrer", referrer));
+                if (gdpr)
+                    postData.Add(new KeyValuePair<string, string>("gdpr", "1"));
+            }
+
+            AppendCustomFields(postData, customFields);
 			var subscribeData = new FormUrlEncodedContent(postData);
 
 			var result = await _httpClient.PostAsync("subscribe", subscribeData);
@@ -50,7 +64,7 @@ namespace Sendy.Client
 			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.Subscribe);
 		}
 
-		public async Task<SendyResponse> Unsubscribe(string emailAddress, string listId)
+		public async Task<SendyResponse> UnsubscribeAsync(string emailAddress, string listId)
 		{
 			var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("email", emailAddress));
@@ -63,7 +77,7 @@ namespace Sendy.Client
 			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.Unsubscribe);
 		}
 
-		public async Task<SendyResponse> DeleteSubscriber(string emailAddress, string listId)
+		public async Task<SendyResponse> DeleteSubscriberAsync(string emailAddress, string listId)
 		{
 			var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("email", emailAddress));
@@ -76,7 +90,7 @@ namespace Sendy.Client
 			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.DeleteSubscriber);
 		}
 
-		public async Task<SendyResponse> SubscriptionStatus(string emailAddress, string listId)
+		public async Task<SendyResponse> SubscriptionStatusAsync(string emailAddress, string listId)
 		{
 			var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("email", emailAddress));
@@ -89,7 +103,7 @@ namespace Sendy.Client
 			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.SubscriptionStatus);
 		}
 
-		public async Task<SendyResponse> ActiveSubscriberCount(string listId)
+		public async Task<SendyResponse> ActiveSubscriberCountAsync(string listId)
 		{
 			var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("list_id", listId));
@@ -104,12 +118,12 @@ namespace Sendy.Client
 		/// <param name="campaign"></param>
 		/// <param name="send">True to send the campaign as well. In that case <paramref name="listIds" /> is also required.</param>
 		/// <param name="listIds">Lists to send to campaign to. Only required if <paramref name="send"/> is true.</param>
-		public async Task<SendyResponse> CreateCampaign(Campaign campaign, bool send, List<string> listIds)
-		{
-			if (send && listIds == null)
+		public async Task<SendyResponse> CreateCampaignAsync(Campaign campaign, bool send, IEnumerable<string> listIds, IEnumerable<string> segmentIds = null, IEnumerable<string> omitListIds = null, IEnumerable<string> omitSegmentsIds = null)
+        {
+			if (send && listIds == null && segmentIds == null)
 				throw new ArgumentNullException(nameof(listIds), "Please provide one or more list ids to send this campaign to.");
 
-			var postData = GetPostData();
+            var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("from_name", campaign.FromName));
 			postData.Add(new KeyValuePair<string, string>("from_email", campaign.FromEmail));
 			postData.Add(new KeyValuePair<string, string>("reply_to", campaign.ReplyTo));
@@ -123,9 +137,20 @@ namespace Sendy.Client
 			if (send)
 			{
 				postData.Add(new KeyValuePair<string, string>("send_campaign", "1"));
-				postData.Add(new KeyValuePair<string, string>("list_ids", string.Join(",", listIds)));
-			}
-			var subscribeData = new FormUrlEncodedContent(postData);
+                if (listIds != null)
+                    postData.Add(new KeyValuePair<string, string>("list_ids", string.Join(",", listIds)));
+
+                if (_apiVer >= new Version(3, 0, 6))
+                {
+                    if (segmentIds != null)
+                        postData.Add(new KeyValuePair<string, string>("segment_ids", string.Join(",", segmentIds)));
+                    if (omitListIds != null)
+                        postData.Add(new KeyValuePair<string, string>("exclude_list_ids", string.Join(",", omitListIds)));
+                    if (omitSegmentsIds != null)
+                        postData.Add(new KeyValuePair<string, string>("exclude_segments_ids", string.Join(",", omitSegmentsIds)));
+                }
+            }
+            var subscribeData = new FormUrlEncodedContent(postData);
 
 			var result = await _httpClient.PostAsync("api/campaigns/create.php", subscribeData);
 
@@ -137,7 +162,7 @@ namespace Sendy.Client
 		/// </summary>
 		/// <param name="mailingList"></param>
 		/// <returns>The id of the list or the error message.</returns>
-		public async Task<SendyResponse> CreateList(MailingList mailingList)
+		public async Task<SendyResponse> CreateListAsync(MailingList mailingList)
 		{
 			var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("list_name", mailingList.Name));

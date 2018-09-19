@@ -21,7 +21,7 @@ namespace Sendy.Client.Tests
 		    var httpClient = _httpMessageHandlerMock.ToHttpClient();
 		    httpClient.BaseAddress = baseUri;
 
-		    _target = new SendyClient(baseUri, apiKey, httpClient);
+		    _target = new SendyClient(baseUri, apiKey, null, httpClient);
 		}
 
 	    [Fact]
@@ -60,7 +60,7 @@ namespace Sendy.Client.Tests
 			    .Respond("text/plain", expectedResponse);
 
 		    //act
-		    var result = await _target.CreateCampaign(campaign, false, null);
+		    var result = await _target.CreateCampaignAsync(campaign, false, null);
 
 			//assert
 		    _httpMessageHandlerMock.VerifyNoOutstandingExpectation();
@@ -108,7 +108,7 @@ namespace Sendy.Client.Tests
 				.Respond("text/plain", expectedResponse);
 
 			//act
-			var result = await _target.CreateCampaign(campaign, true, listIds);
+			var result = await _target.CreateCampaignAsync(campaign, true, listIds);
 
 			//assert
 			_httpMessageHandlerMock.VerifyNoOutstandingExpectation();
@@ -151,7 +151,7 @@ namespace Sendy.Client.Tests
 				.Respond("text/plain", expectedResponse);
 
 			//act
-			var result = await _target.CreateCampaign(campaign, true, new List<string> { "listId" });
+			var result = await _target.CreateCampaignAsync(campaign, true, new List<string> { "listId" });
 
 			//assert
 			_httpMessageHandlerMock.VerifyNoOutstandingExpectation();
