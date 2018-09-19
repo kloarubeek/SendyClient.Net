@@ -16,7 +16,7 @@ namespace Sendy.Client
         private readonly Version _apiVer;
         private readonly HttpClient _httpClient;
 
-		public SendyClient(Uri baseUri, string apiKey, Version apiVer) : this(baseUri, apiKey, apiVer, null)
+		public SendyClient(Uri baseUri, string apiKey, Version apiVer = null) : this(baseUri, apiKey, apiVer, null)
 		{
 		}
 
@@ -118,7 +118,7 @@ namespace Sendy.Client
 		/// <param name="campaign"></param>
 		/// <param name="send">True to send the campaign as well. In that case <paramref name="listIds" /> is also required.</param>
 		/// <param name="listIds">Lists to send to campaign to. Only required if <paramref name="send"/> is true.</param>
-		public async Task<SendyResponse> CreateCampaignAsync(Campaign campaign, bool send, IEnumerable<string> listIds, IEnumerable<string> segmentIds = null, IEnumerable<string> omitListIds = null, IEnumerable<string> omitSegmentsIds = null)
+		public async Task<SendyResponse> CreateCampaignAsync(Campaign campaign, bool send, IEnumerable<string> listIds = null, IEnumerable<string> segmentIds = null, IEnumerable<string> omitListIds = null, IEnumerable<string> omitSegmentsIds = null)
         {
 			if (send && listIds == null && segmentIds == null)
 				throw new ArgumentNullException(nameof(listIds), "Please provide one or more list ids to send this campaign to.");
