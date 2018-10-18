@@ -108,7 +108,7 @@ namespace Sendy.Client.Tests
 				.Respond("text/plain", expectedResponse);
 
 			//act
-			var result = await _target.CreateCampaignAsync(campaign, true, listIds);
+			var result = await _target.CreateCampaignAsync(campaign, true, new Groups(listIds));
 
 			//assert
 			_httpMessageHandlerMock.VerifyNoOutstandingExpectation();
@@ -122,7 +122,8 @@ namespace Sendy.Client.Tests
 		{
 			//arrange
 			var expectedResponse = "From name not passed";
-			var campaign = new Campaign
+            var listIds = new List<string> { "listId" };
+            var campaign = new Campaign
 			{
 				BrandId = 1,
 				FromEmail = "jeroen@klarenbeek.nl",
@@ -151,7 +152,7 @@ namespace Sendy.Client.Tests
 				.Respond("text/plain", expectedResponse);
 
 			//act
-			var result = await _target.CreateCampaignAsync(campaign, true, new List<string> { "listId" });
+			var result = await _target.CreateCampaignAsync(campaign, true, new Groups(listIds));
 
 			//assert
 			_httpMessageHandlerMock.VerifyNoOutstandingExpectation();

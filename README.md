@@ -91,7 +91,7 @@ var result = await sendyClient.CreateListAsync(list);
 
 
 ## API updates
-The `SendyClient` class constructor now includes a new parameter named apiVer where you can pass in the version of Sendy you're working against.
+The `SendyClient` class constructor now includes a new parameter named apiVer where you can pass in the version of Sendy you're working against.  If not supplied it won't support version 3 enhancements.
 
 ```c#
 var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret", new Version(3, 0, 6));

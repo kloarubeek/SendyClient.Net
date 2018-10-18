@@ -13,8 +13,8 @@ namespace Sendy.Client
 	public class SendyClient : IDisposable
 	{
 		private readonly string _apiKey;
-        private readonly Version _apiVer;
-        private readonly HttpClient _httpClient;
+		private readonly Version _apiVer;
+		private readonly HttpClient _httpClient;
 
 		public SendyClient(Uri baseUri, string apiKey, Version apiVer = null) : this(baseUri, apiKey, apiVer, null)
 		{
@@ -26,35 +26,22 @@ namespace Sendy.Client
 		internal SendyClient(Uri baseUri, string apiKey, Version apiVer = null, HttpClient httpClient = null)
 		{
 			_apiKey = apiKey;
-            _apiVer = apiVer ?? new Version(2, 1);
+			_apiVer = apiVer ?? new Version(2, 1);
 			_httpClient = httpClient ?? new HttpClient();
 			_httpClient.BaseAddress = baseUri;
 		}
 
-		public Task<SendyResponse> SubscribeAsync(string emailAddress, string name, string listId)
+		public Task<SendyResponse> SubscribeAsync(string emailAddress, string name, string listId, Dictionary<string, string> customFields = null)
 		{
-			return SubscribeAsync(emailAddress, name, listId, null);
+			return SubscribeAsync(listId, new Subscriber(emailAddress, name), customFields);
 		}
 
 		/// <param name="customFields">For custom fields, use Sendy fieldname as key value.</param>
-		public async Task<SendyResponse> SubscribeAsync(string emailAddress, string name, string listId, Dictionary<string, string> customFields, string country = null, string ipaddress = null, string referrer = null, bool gdpr = false)
+		public async Task<SendyResponse> SubscribeAsync(string listId, Subscriber subscriber, Dictionary<string, string> customFields)
 		{
 			var postData = GetPostData();
-			postData.Add(new KeyValuePair<string, string>("email", emailAddress));
-			postData.Add(new KeyValuePair<string, string>("name", name));
 			postData.Add(new KeyValuePair<string, string>("list", listId));
-
-            if (_apiVer >= new Version(3, 0, 5))
-            {
-                if (country != null)
-                    postData.Add(new KeyValuePair<string, string>("country", country));
-                if (ipaddress != null)
-                    postData.Add(new KeyValuePair<string, string>("ipaddress", ipaddress));
-                if (referrer != null)
-                    postData.Add(new KeyValuePair<string, string>("referrer", referrer));
-                if (gdpr)
-                    postData.Add(new KeyValuePair<string, string>("gdpr", "1"));
-            }
+            AppendSubscriberFields(postData, subscriber);
 
             AppendCustomFields(postData, customFields);
 			var subscribeData = new FormUrlEncodedContent(postData);
@@ -115,42 +102,23 @@ namespace Sendy.Client
 			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.ActiveSubscriberCount);
 		}
 
-		/// <param name="campaign"></param>
-		/// <param name="send">True to send the campaign as well. In that case <paramref name="listIds" /> is also required.</param>
-		/// <param name="listIds">Lists to send to campaign to. Only required if <paramref name="send"/> is true.</param>
-		public async Task<SendyResponse> CreateCampaignAsync(Campaign campaign, bool send, IEnumerable<string> listIds = null, IEnumerable<string> segmentIds = null, IEnumerable<string> omitListIds = null, IEnumerable<string> omitSegmentsIds = null)
+        /// <param name="campaign"></param>
+        /// <param name="send">True to send the campaign as well. In that case <paramref name="listIds" /> is also required.</param>
+        /// <param name="groups">Lists to send to campaign to. Only required if <paramref name="send"/> is true.</param>
+        public async Task<SendyResponse> CreateCampaignAsync(Campaign campaign, bool send, Groups groups = null)
         {
-			if (send && listIds == null && segmentIds == null)
-				throw new ArgumentNullException(nameof(listIds), "Please provide one or more list ids to send this campaign to.");
+			if (send && groups == null)
+				throw new ArgumentNullException(nameof(groups), "Please provide one or more list ids to send this campaign to.");
 
-            var postData = GetPostData();
-			postData.Add(new KeyValuePair<string, string>("from_name", campaign.FromName));
-			postData.Add(new KeyValuePair<string, string>("from_email", campaign.FromEmail));
-			postData.Add(new KeyValuePair<string, string>("reply_to", campaign.ReplyTo));
-			postData.Add(new KeyValuePair<string, string>("title", campaign.Title));
-			postData.Add(new KeyValuePair<string, string>("subject", campaign.Subject));
-			postData.Add(new KeyValuePair<string, string>("plain_text", campaign.PlainText));
-			postData.Add(new KeyValuePair<string, string>("html_text", campaign.HtmlText));
-			postData.Add(new KeyValuePair<string, string>("brand_id", campaign.BrandId.ToString()));
-			postData.Add(new KeyValuePair<string, string>("query_string", campaign.Querystring));
+			var postData = GetPostData();
+            AppendCampaignFields(postData, campaign);
 
 			if (send)
 			{
 				postData.Add(new KeyValuePair<string, string>("send_campaign", "1"));
-                if (listIds != null)
-                    postData.Add(new KeyValuePair<string, string>("list_ids", string.Join(",", listIds)));
-
-                if (_apiVer >= new Version(3, 0, 6))
-                {
-                    if (segmentIds != null)
-                        postData.Add(new KeyValuePair<string, string>("segment_ids", string.Join(",", segmentIds)));
-                    if (omitListIds != null)
-                        postData.Add(new KeyValuePair<string, string>("exclude_list_ids", string.Join(",", omitListIds)));
-                    if (omitSegmentsIds != null)
-                        postData.Add(new KeyValuePair<string, string>("exclude_segments_ids", string.Join(",", omitSegmentsIds)));
-                }
+                AppendGroupsFields(postData, groups);
             }
-            var subscribeData = new FormUrlEncodedContent(postData);
+			var subscribeData = new FormUrlEncodedContent(postData);
 
 			var result = await _httpClient.PostAsync("api/campaigns/create.php", subscribeData);
 
@@ -189,7 +157,7 @@ namespace Sendy.Client
 			};
 		}
 
-		private static void AppendCustomFields(List<KeyValuePair<string, string>> postData, Dictionary<string, string> customFields)
+		private void AppendCustomFields(List<KeyValuePair<string, string>> postData, Dictionary<string, string> customFields)
 		{
 			if (customFields != null && customFields.Any())
 			{
@@ -200,7 +168,63 @@ namespace Sendy.Client
 			}
 		}
 
-		public void Dispose()
+		private void AppendSubscriberFields(List<KeyValuePair<string, string>> postData, Subscriber subscriber)
+		{
+			if (subscriber != null)
+			{
+				postData.Add(new KeyValuePair<string, string>("email", subscriber.EmailAddress));
+				postData.Add(new KeyValuePair<string, string>("name", subscriber.Name));
+
+				if (_apiVer >= new Version(3, 0, 5))
+				{
+					if (subscriber.Country != null)
+						postData.Add(new KeyValuePair<string, string>("country", subscriber.Country));
+					if (subscriber.IPAddress != null)
+						postData.Add(new KeyValuePair<string, string>("ipaddress", subscriber.IPAddress));
+					if (subscriber.Referrer != null)
+						postData.Add(new KeyValuePair<string, string>("referrer", subscriber.Referrer));
+					if (subscriber.GDPR)
+						postData.Add(new KeyValuePair<string, string>("gdpr", "1"));
+				}
+			}
+		}
+
+		private void AppendCampaignFields(List<KeyValuePair<string, string>> postData, Campaign campaign)
+		{
+			if (campaign != null)
+			{
+				postData.Add(new KeyValuePair<string, string>("from_name", campaign.FromName));
+				postData.Add(new KeyValuePair<string, string>("from_email", campaign.FromEmail));
+				postData.Add(new KeyValuePair<string, string>("reply_to", campaign.ReplyTo));
+				postData.Add(new KeyValuePair<string, string>("title", campaign.Title));
+				postData.Add(new KeyValuePair<string, string>("subject", campaign.Subject));
+				postData.Add(new KeyValuePair<string, string>("plain_text", campaign.PlainText));
+				postData.Add(new KeyValuePair<string, string>("html_text", campaign.HtmlText));
+				postData.Add(new KeyValuePair<string, string>("brand_id", campaign.BrandId.ToString()));
+				postData.Add(new KeyValuePair<string, string>("query_string", campaign.Querystring));
+			}
+		}
+
+        private void AppendGroupsFields(List<KeyValuePair<string, string>> postData, Groups groups)
+        {
+            if (groups != null)
+            {
+                if (groups.ListIds != null)
+                    postData.Add(new KeyValuePair<string, string>("list_ids", string.Join(",", groups.ListIds)));
+
+                if (_apiVer >= new Version(3, 0, 6))
+                {
+                    if (groups.SegmentIds != null)
+                        postData.Add(new KeyValuePair<string, string>("segment_ids", string.Join(",", groups.SegmentIds)));
+                    if (groups.OmitListIds != null)
+                        postData.Add(new KeyValuePair<string, string>("exclude_list_ids", string.Join(",", groups.OmitListIds)));
+                    if (groups.OmitSegmentsIds != null)
+                        postData.Add(new KeyValuePair<string, string>("exclude_segments_ids", string.Join(",", groups.OmitSegmentsIds)));
+                }
+            }
+        }
+
+        public void Dispose()
 		{
 			_httpClient?.Dispose();
 		}
