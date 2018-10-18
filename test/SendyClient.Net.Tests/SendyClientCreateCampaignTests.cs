@@ -122,8 +122,8 @@ namespace Sendy.Client.Tests
 		{
 			//arrange
 			var expectedResponse = "From name not passed";
-            var listIds = new List<string> { "listId" };
-            var campaign = new Campaign
+			var listIds = new List<string> { "listId" };
+			var campaign = new Campaign
 			{
 				BrandId = 1,
 				FromEmail = "jeroen@klarenbeek.nl",

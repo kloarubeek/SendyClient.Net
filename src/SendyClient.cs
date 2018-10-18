@@ -41,9 +41,9 @@ namespace Sendy.Client
 		{
 			var postData = GetPostData();
 			postData.Add(new KeyValuePair<string, string>("list", listId));
-            AppendSubscriberFields(postData, subscriber);
+			AppendSubscriberFields(postData, subscriber);
 
-            AppendCustomFields(postData, customFields);
+			AppendCustomFields(postData, customFields);
 			var subscribeData = new FormUrlEncodedContent(postData);
 
 			var result = await _httpClient.PostAsync("subscribe", subscribeData);
@@ -102,22 +102,22 @@ namespace Sendy.Client
 			return await SendyResponseHelper.HandleResponse(result, SendyResponseHelper.SendyActions.ActiveSubscriberCount);
 		}
 
-        /// <param name="campaign"></param>
-        /// <param name="send">True to send the campaign as well. In that case <paramref name="listIds" /> is also required.</param>
-        /// <param name="groups">Lists to send to campaign to. Only required if <paramref name="send"/> is true.</param>
-        public async Task<SendyResponse> CreateCampaignAsync(Campaign campaign, bool send, Groups groups = null)
-        {
+		/// <param name="campaign"></param>
+		/// <param name="send">True to send the campaign as well. In that case <paramref name="listIds" /> is also required.</param>
+		/// <param name="groups">Lists to send to campaign to. Only required if <paramref name="send"/> is true.</param>
+		public async Task<SendyResponse> CreateCampaignAsync(Campaign campaign, bool send, Groups groups = null)
+		{
 			if (send && groups == null)
 				throw new ArgumentNullException(nameof(groups), "Please provide one or more list ids to send this campaign to.");
 
 			var postData = GetPostData();
-            AppendCampaignFields(postData, campaign);
+			AppendCampaignFields(postData, campaign);
 
 			if (send)
 			{
 				postData.Add(new KeyValuePair<string, string>("send_campaign", "1"));
-                AppendGroupsFields(postData, groups);
-            }
+				AppendGroupsFields(postData, groups);
+			}
 			var subscribeData = new FormUrlEncodedContent(postData);
 
 			var result = await _httpClient.PostAsync("api/campaigns/create.php", subscribeData);
@@ -205,26 +205,26 @@ namespace Sendy.Client
 			}
 		}
 
-        private void AppendGroupsFields(List<KeyValuePair<string, string>> postData, Groups groups)
-        {
-            if (groups != null)
-            {
-                if (groups.ListIds != null)
-                    postData.Add(new KeyValuePair<string, string>("list_ids", string.Join(",", groups.ListIds)));
+		private void AppendGroupsFields(List<KeyValuePair<string, string>> postData, Groups groups)
+		{
+			if (groups != null)
+			{
+				if (groups.ListIds != null)
+					postData.Add(new KeyValuePair<string, string>("list_ids", string.Join(",", groups.ListIds)));
 
-                if (_apiVer >= new Version(3, 0, 6))
-                {
-                    if (groups.SegmentIds != null)
-                        postData.Add(new KeyValuePair<string, string>("segment_ids", string.Join(",", groups.SegmentIds)));
-                    if (groups.OmitListIds != null)
-                        postData.Add(new KeyValuePair<string, string>("exclude_list_ids", string.Join(",", groups.OmitListIds)));
-                    if (groups.OmitSegmentsIds != null)
-                        postData.Add(new KeyValuePair<string, string>("exclude_segments_ids", string.Join(",", groups.OmitSegmentsIds)));
-                }
-            }
-        }
+				if (_apiVer >= new Version(3, 0, 6))
+				{
+					if (groups.SegmentIds != null)
+						postData.Add(new KeyValuePair<string, string>("segment_ids", string.Join(",", groups.SegmentIds)));
+					if (groups.OmitListIds != null)
+						postData.Add(new KeyValuePair<string, string>("exclude_list_ids", string.Join(",", groups.OmitListIds)));
+					if (groups.OmitSegmentsIds != null)
+						postData.Add(new KeyValuePair<string, string>("exclude_segments_ids", string.Join(",", groups.OmitSegmentsIds)));
+				}
+			}
+		}
 
-        public void Dispose()
+		public void Dispose()
 		{
 			_httpClient?.Dispose();
 		}

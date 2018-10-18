@@ -4,7 +4,7 @@ namespace Sendy.Client.Model
 {
 	public class Groups
 	{
-        public IEnumerable<string> ListIds { get; set; }
+		public IEnumerable<string> ListIds { get; set; }
 		public IEnumerable<string> SegmentIds { get; set; }
 		public IEnumerable<string> OmitListIds { get; set; }
 		public IEnumerable<string> OmitSegmentsIds { get; set; }
@@ -15,7 +15,7 @@ namespace Sendy.Client.Model
 
 		public Groups(IEnumerable<string> listIds)
 		{
-            ListIds = listIds;
+			ListIds = listIds;
 		}
 	}
 }
