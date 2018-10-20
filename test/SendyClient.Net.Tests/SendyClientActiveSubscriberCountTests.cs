@@ -20,7 +20,7 @@ namespace Sendy.Client.Tests
 		    var httpClient = _httpMessageHandlerMock.ToHttpClient();
 		    httpClient.BaseAddress = baseUri;
 
-		    _target = new SendyClient(baseUri, apiKey, httpClient);
+		    _target = new SendyClient(baseUri, apiKey, null, httpClient);
 		}
 
 	    [Fact]
@@ -40,7 +40,7 @@ namespace Sendy.Client.Tests
 			    .Respond("text/plain", expectedNumber);
 
 		    //act
-		    var result = await _target.ActiveSubscriberCount(listId);
+		    var result = await _target.ActiveSubscriberCountAsync(listId);
 
 			//assert
 		    _httpMessageHandlerMock.VerifyNoOutstandingExpectation();
@@ -65,7 +65,7 @@ namespace Sendy.Client.Tests
 			    .Respond("text/plain", expectedError);
 
 		    //act
-		    var result = await _target.ActiveSubscriberCount(listId);
+		    var result = await _target.ActiveSubscriberCountAsync(listId);
 
 			//assert
 		    _httpMessageHandlerMock.VerifyNoOutstandingExpectation();
