@@ -32,7 +32,8 @@ namespace Sendy.Client
 	    {
 		    if (responseMessage.IsSuccessStatusCode)
 		    {
-			    var responseContent = await responseMessage.Content.ReadAsStringAsync();
+				var responseContent = await responseMessage.Content.ReadAsStringAsync();
+				responseContent = responseContent.Trim();
 			    var isSuccess = IsSuccess(responseContent, action);
 
 			    return new SendyResponse
