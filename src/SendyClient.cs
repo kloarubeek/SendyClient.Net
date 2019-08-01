@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Sendy.Client.Model;
-
-[assembly: InternalsVisibleTo("Sendy.Client.Tests")]
 
 namespace Sendy.Client
 {
@@ -15,19 +12,23 @@ namespace Sendy.Client
 		private readonly string _apiKey;
 		private readonly Version _apiVer;
 		private readonly HttpClient _httpClient;
+		private readonly bool _disposeHttpClient = false;
 
 		public SendyClient(Uri baseUri, string apiKey, Version apiVer = null) : this(baseUri, apiKey, apiVer, null)
 		{
 		}
 
-		/// <summary>
-		/// This one should only be used for unit tests to support injecting of the httpClient
-		/// </summary>
-		internal SendyClient(Uri baseUri, string apiKey, Version apiVer = null, HttpClient httpClient = null)
+		public SendyClient(Uri baseUri, string apiKey, Version apiVer, HttpClient httpClient)
 		{
 			_apiKey = apiKey;
 			_apiVer = apiVer ?? new Version(2, 1);
-			_httpClient = httpClient ?? new HttpClient();
+			_httpClient = httpClient;
+
+			if (_httpClient == null)
+			{
+				_httpClient = new HttpClient();
+				_disposeHttpClient = true;
+			}
 			_httpClient.BaseAddress = baseUri;
 		}
 
@@ -226,7 +227,8 @@ namespace Sendy.Client
 
 		public void Dispose()
 		{
-			_httpClient?.Dispose();
+			if(_disposeHttpClient)
+				_httpClient?.Dispose();
 		}
 	}
 }

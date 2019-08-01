@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.1.1</Version>
+    <Version>3.2.0</Version>
     <Description>A Sendy client, now supported on .Net Core!</Description>
     <Authors>Jeroen Klarenbeek</Authors>
     <Company />
@@ -14,7 +14,7 @@
     <PackageId>SendyClient.Net</PackageId>
     <AssemblyVersion>3.1.1.0</AssemblyVersion>
     <FileVersion>3.1.1.0</FileVersion>
-    <PackageReleaseNotes>Remove any spaces or newlines from Sendy responses.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added possibility to pass your own httpClient (to be able to set properties like timeout).</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>
