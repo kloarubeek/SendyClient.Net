@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.2.0</Version>
+    <Version>3.3.0</Version>
     <Description>A Sendy client, now supported on .Net Core!</Description>
     <Authors>Jeroen Klarenbeek</Authors>
     <Company />
@@ -12,9 +12,9 @@
     <PackageTags>Sendy</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageId>SendyClient.Net</PackageId>
-    <AssemblyVersion>3.1.1.0</AssemblyVersion>
-    <FileVersion>3.1.1.0</FileVersion>
-    <PackageReleaseNotes>Added possibility to pass your own httpClient (to be able to set properties like timeout).</PackageReleaseNotes>
+    <AssemblyVersion>3.3.0.0</AssemblyVersion>
+    <FileVersion>3.3.0.0</FileVersion>
+    <PackageReleaseNotes>Support for .Net 5.</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>
