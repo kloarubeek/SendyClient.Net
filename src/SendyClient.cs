@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -203,7 +204,25 @@ namespace Sendy.Client
 				postData.Add(new KeyValuePair<string, string>("html_text", campaign.HtmlText));
 				postData.Add(new KeyValuePair<string, string>("brand_id", campaign.BrandId.ToString()));
 				postData.Add(new KeyValuePair<string, string>("query_string", campaign.Querystring));
+
+				if (campaign.TrackOpens.HasValue)
+					postData.Add(new KeyValuePair<string, string>("track_opens", ((int)campaign.TrackOpens.Value).ToString()));
+				if (campaign.TrackClicks.HasValue)
+					postData.Add(new KeyValuePair<string, string>("track_clicks", ((int)campaign.TrackClicks.Value).ToString()));
+				if (campaign.ScheduleDateTime.HasValue)
+					postData.Add(new KeyValuePair<string, string>("schedule_date_time", FormatScheduleDateTime(campaign.ScheduleDateTime.Value)));
+				if (!string.IsNullOrEmpty(campaign.ScheduleTimezone))
+					postData.Add(new KeyValuePair<string, string>("schedule_timezone", campaign.ScheduleTimezone));
 			}
+		}
+
+		/// <summary>
+		/// Sendy expects schedule_date_time in the format "June 15, 2021 6:05pm".
+		/// </summary>
+		private static string FormatScheduleDateTime(DateTime dateTime)
+		{
+			return dateTime.ToString("MMMM d, yyyy h:mm", CultureInfo.InvariantCulture)
+				+ dateTime.ToString("tt", CultureInfo.InvariantCulture).ToLowerInvariant();
 		}
 
 		private void AppendGroupsFields(List<KeyValuePair<string, string>> postData, Groups groups)

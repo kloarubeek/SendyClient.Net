@@ -69,7 +69,7 @@ namespace Sendy.Client
 				    return int.TryParse(responseContent, out int dummy);
 
 			    case SendyActions.CreateCampaign:
-				    successContent = new List<string> { "Campaign created", "Campaign created and now sending" };
+				    successContent = new List<string> { "Campaign created", "Campaign created and now sending", "Campaign scheduled" };
 				    return successContent.Contains(responseContent);
 			    default:
 				    throw new ArgumentOutOfRangeException(nameof(action), action, null);
