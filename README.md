@@ -1,7 +1,6 @@
 # SendyClient.Net
 A Sendy client to interact in .Net Core applications with the [Sendy API](https://sendy.co)!
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/kloarubeek/SendyClient.Net?branch=master)](https://bettercodehub.com/)
 [![NuGet](https://img.shields.io/badge/nuget-2.2.0-blue.svg)](https://www.nuget.org/packages/SendyClient.Net/)
 # Sendy
 It can be used to perform the following [Sendy API actions](https://sendy.co/api):
@@ -12,8 +11,6 @@ It can be used to perform the following [Sendy API actions](https://sendy.co/api
 - Active subscriber count
 - Create campaign (and send)
 - [Create list](#createList) (**new!**)
-
-It has been built to interact with version v2.1.2.8.
 
 ## Available on Nuget
 
