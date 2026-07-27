@@ -1,7 +1,7 @@
 # SendyClient.Net
 A Sendy client to interact in .Net Core applications with the [Sendy API](https://sendy.co)!
 
-[![NuGet](https://img.shields.io/badge/nuget-2.2.0-blue.svg)](https://www.nuget.org/packages/SendyClient.Net/)
+[![NuGet](https://img.shields.io/badge/nuget-4.0.0-blue.svg)](https://www.nuget.org/packages/SendyClient.Net/)
 # Sendy
 It can be used to perform the following [Sendy API actions](https://sendy.co/api):
 - Subscribe (including custom fields)
