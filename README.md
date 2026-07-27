@@ -57,6 +57,29 @@ var campaign = new Campaign
 result = await sendyClient.CreateCampaignAsync(campaign, false, null);
 ```
 
+Optionally, a campaign can also control open/click tracking and be scheduled for a later date instead of sent immediately:
+
+```c#
+var campaign = new Campaign
+{
+  BrandId = 1,
+  FromEmail = "noreply@fromme.com",
+  FromName = "Jeroen",
+  HtmlText = "<html><body><b>Hi</b></body></html>",
+  PlainText = "Hi",
+  ReplyTo = "sjaan@banaan.nl",
+  Subject = "Sent with SendyClient.Net!",
+  Title = "Campaign demo",
+  TrackOpens = TrackingOption.Enabled,
+  TrackClicks = TrackingOption.Anonymous,
+  ScheduleDateTime = new DateTime(2021, 6, 15, 18, 5, 0), // minutes must be a multiple of 5
+  ScheduleTimezone = "America/New_York"
+};
+
+// send_campaign must be true (send: true below) for scheduling to take effect, and requires one or more lists/segments.
+result = await sendyClient.CreateCampaignAsync(campaign, true, new Groups(new[] { "myListId" }));
+```
+
 ## <a name="createList"></a>Create list API
 
 The create list is a new API. Copy the [Sendy directory](Sendy) to your Sendy installation. This will add a new API call to create a list, including custom fields when necessary.
@@ -101,6 +124,7 @@ var sendyClient = new SendyClient(new Uri("https://mysendy"), "mySendySecret", n
 
 - Subscribe API now includes country, ipaddress, referrer & gdpr parameters.
 - CreateCampaign API now includes segment_ids, exclude_list_ids & exclude_segments_ids parameters.
+- CreateCampaign API now also includes track_opens, track_clicks, schedule_date_time & schedule_timezone parameters, and recognizes the "Campaign scheduled" response.
 
 
 ## Questions

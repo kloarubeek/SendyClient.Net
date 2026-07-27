@@ -159,5 +159,60 @@ namespace Sendy.Client.Tests
 			Assert.False(result.IsSuccess);
 			Assert.Equal(expectedResponse, result.ErrorMessage);
 		}
+
+		[Fact]
+		public async Task CreateCampaign_WithTrackingAndSchedule_ReturnsCampaignScheduled()
+		{
+			//arrange
+			var expectedResponse = "Campaign scheduled";
+			var listIds = new List<string> { "listId" };
+			var campaign = new Campaign
+			{
+				BrandId = 1,
+				FromEmail = "jeroen@klarenbeek.nl",
+				FromName = "Jeroen",
+				HtmlText = "<html><body><b>Hi</b></body></html>",
+				PlainText = "Hi",
+				Querystring = "querystring=sjaak",
+				ReplyTo = "hank@klarenbeek.nl",
+				Subject = "Subjectje",
+				Title = "Title 1",
+				TrackOpens = TrackingOption.Enabled,
+				TrackClicks = TrackingOption.Anonymous,
+				ScheduleDateTime = new DateTime(2021, 6, 15, 18, 5, 0),
+				ScheduleTimezone = "America/New_York"
+			};
+
+			var expectedPostData = new List<KeyValuePair<string, string>>
+			{
+				new KeyValuePair<string, string>("from_name", campaign.FromName),
+				new KeyValuePair<string, string>("from_email", campaign.FromEmail),
+				new KeyValuePair<string, string>("reply_to", campaign.ReplyTo),
+				new KeyValuePair<string, string>("title", campaign.Title),
+				new KeyValuePair<string, string>("subject", campaign.Subject),
+				new KeyValuePair<string, string>("plain_text", campaign.PlainText),
+				new KeyValuePair<string, string>("html_text", campaign.HtmlText),
+				new KeyValuePair<string, string>("brand_id", campaign.BrandId.ToString()),
+				new KeyValuePair<string, string>("query_string", campaign.Querystring),
+				new KeyValuePair<string, string>("track_opens", "1"),
+				new KeyValuePair<string, string>("track_clicks", "2"),
+				new KeyValuePair<string, string>("schedule_date_time", "June 15, 2021 6:05pm"),
+				new KeyValuePair<string, string>("schedule_timezone", campaign.ScheduleTimezone),
+				new KeyValuePair<string, string>("send_campaign", "1"),
+				new KeyValuePair<string, string>("list_ids", string.Join(",", listIds))
+			};
+
+			_httpMessageHandlerMock.Expect("/api/campaigns/create.php")
+				.WithFormData(expectedPostData)
+				.Respond("text/plain", expectedResponse);
+
+			//act
+			var result = await _target.CreateCampaignAsync(campaign, true, new Groups(listIds));
+
+			//assert
+			_httpMessageHandlerMock.VerifyNoOutstandingExpectation();
+			Assert.True(result.IsSuccess);
+			Assert.Equal(expectedResponse, result.Response);
+		}
 	}
 }
